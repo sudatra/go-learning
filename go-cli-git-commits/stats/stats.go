@@ -5,5 +5,5 @@ import (
 )
 
 func Stats(email string) {
-	fmt.Println("stats for:", email)
+	fmt.Println("stats for:", email);
 }
