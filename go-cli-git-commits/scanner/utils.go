@@ -3,9 +3,11 @@ package scanner
 import (
 	"bufio"
 	"io"
+	"io/ioutil"
 	"log"
 	"os"
 	"os/user"
+	"strings"
 )
 
 func getDotFilePath() string {
@@ -16,13 +18,6 @@ func getDotFilePath() string {
 
 	dotFile := usr.HomeDir + "/.goGitLocalStats";
 	return dotFile
-}
-
-func addNewSliceElementsToFile(filePath string, newRepos []string) {
-		existingRepos := parseFileLinesToSlice(filePath);
-		repos := joinSlices(newRepos, existingRepos);
-
-		dumpStringsSliceToFile(repos, filePath);
 }
 
 func parseFileLinesToSlice(filePath string) []string {
@@ -61,4 +56,36 @@ func openFile(filePath string) *os.File {
 	}
 
 	return f
+}
+
+func sliceContains(slice []string, value string) bool {
+	for _, v := range slice {
+		if v == value {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+func joinSlices(newRepos []string, existingRepos []string) []string {
+	for _, i := range newRepos {
+		if !sliceContains(existingRepos, i) {
+			existingRepos = append(existingRepos, i);
+		}
+	}
+
+	return existingRepos;
+}
+
+func dumpStringsSliceToFile(repos []string, filePath string) {
+	content := strings.Join(repos, "\n");
+	ioutil.WriteFile(filePath, []byte(content), 0755);
+}
+
+func addNewSliceElementsToFile(filePath string, newRepos []string) {
+		existingRepos := parseFileLinesToSlice(filePath);
+		repos := joinSlices(newRepos, existingRepos);
+
+		dumpStringsSliceToFile(repos, filePath);
 }
