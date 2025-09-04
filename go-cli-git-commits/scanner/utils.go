@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-func getDotFilePath() string {
+func GetDotFilePath() string {
 	usr, err := user.Current();
 	if err != nil {
 		log.Fatal(err);
@@ -20,7 +20,7 @@ func getDotFilePath() string {
 	return dotFile
 }
 
-func parseFileLinesToSlice(filePath string) []string {
+func ParseFileLinesToSlice(filePath string) []string {
 	f := openFile(filePath);
 	defer f.Close();
 	

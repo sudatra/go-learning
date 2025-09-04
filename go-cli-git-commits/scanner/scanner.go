@@ -11,7 +11,7 @@ func Scan(folder string) {
 	fmt.Printf("Found Folders: \n\n");
 
 	repositories := recursiveScanFolder(folder);
-	filePath := getDotFilePath();
+	filePath := GetDotFilePath();
 
 	addNewSliceElementsToFile(filePath, repositories);
 	fmt.Printf("\n\nSuccessfully added\n\n");
