@@ -1,8 +1,10 @@
 package stats
 
 import (
-	"github.com/sudatra/go-cli-git-commits/scanner"
+	"time"
+
 	"github.com/go-git/go-git/v5"
+	"github.com/sudatra/go-cli-git-commits/scanner"
 )
 
 const daysInLastSixMonths = 183;
@@ -66,4 +68,27 @@ func fillCommits(email string, path string, commits map[int]int) map[int]int {
 	}
 
 	return commits;
+}
+
+func getBeginningOfDay(t time.Time) time.Time {
+	year, month, day := t.Date();
+	startOfDay := time.Date(year, month, day, 0, 0, 0, 0, t.Location());
+	
+	return startOfDay;
+}
+
+func countDaysSinceDate(date time.Time) int {
+	days := 0;
+	now := getBeginningOfDay(time.Now());
+
+	for date.Before(now) {
+		date = date.Add(time.Hour * 24);
+		days++;
+
+		if days > daysInLastSixMonths {
+			return outOfRange;
+		}
+	}
+
+	return days;
 }
