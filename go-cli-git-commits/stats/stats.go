@@ -1,6 +1,7 @@
 package stats
 
 import (
+	"sort"
 	"time"
 
 	"github.com/go-git/go-git/v5"
@@ -8,7 +9,8 @@ import (
 )
 
 const daysInLastSixMonths = 183;
-const outOfRange = 99999
+const outOfRange = 99999;
+type column []int;
 
 func processRepositories(email string) map[int]int {
 	filePath := scanner.GetDotFilePath();
@@ -92,3 +94,66 @@ func countDaysSinceDate(date time.Time) int {
 
 	return days;
 }
+
+func calcOffset() int {
+	var offset int;
+	weekday := time.Now().Weekday();
+
+	switch weekday {
+	case time.Sunday:
+		offset = 7;
+	case time.Monday:
+		offset = 6;
+	case time.Tuesday:
+		offset = 5;
+	case time.Wednesday:
+		offset = 4;
+	case time.Thursday:
+		offset = 3;
+	case time.Friday:
+		offset = 2;
+	case time.Saturday:
+		offset = 1;
+	}
+
+	return offset;
+}
+
+func printCommitStats(commits map[int]int) {
+	keys := sortMapIntoSlice(commits);
+	cols := buildCols(keys, commits);
+
+	printCells(cols);
+}
+
+func sortMapIntoSlice(mp map[int]int) []int {
+	var keys []int;
+	for k := range m {
+		keys = append(keys, k);
+	}
+
+	sort.Ints(keys);
+	return keys;
+}
+
+func buildCols(keys []int, commits map[int]int) map[int]column {
+	cols := make(map[int]column);
+	col := column{};
+
+	for _, k := range keys {
+		week := int(k / 7);
+		dayInWeek := k % 7;
+
+		if dayInWeek == 0 {
+			col = column{};
+		}
+
+		col = append(col, commits[k]);
+		if dayInWeek == 6 {
+			cols[week] = col;
+		}
+	}
+
+	return cols;
+}
+
