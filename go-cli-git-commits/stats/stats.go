@@ -1,6 +1,7 @@
 package stats
 
 import (
+	"fmt"
 	"sort"
 	"time"
 
@@ -157,3 +158,44 @@ func buildCols(keys []int, commits map[int]int) map[int]column {
 	return cols;
 }
 
+func printCells(cols map[int]column) {
+	printMonths();
+
+	for j := 6; j >= 0; j-- {
+		for i := weeksInLastSixMonths + 1; i >= 0; i-- {
+			if i == weeksInLastSixMonths + 1 {
+				printDayCol(j);
+			}
+
+			if col, ok := cols[i]; ok {
+				if i == 0 && j == calcOffset() - 1 {
+					printCell(cols[j], true);
+					continue;
+				} else {
+					if len(col) > j {
+						printCell(col[j], false);
+						continue;
+					}
+				}
+			}
+
+			printCell(0, false);
+		}
+
+		fmt.Printf("\n");
+	}
+}
+
+func printDayCol(day int) {
+	out := "		";
+	switch day {
+	case 1:
+		out = " Mon ";
+	case 3:
+	out = " Wed ";
+	case 5:
+	out = " Fri ";
+	}
+
+	fmt.Printf(out);
+}
